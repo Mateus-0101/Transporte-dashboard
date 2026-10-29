@@ -30,8 +30,8 @@ if regiao != "Todas":
 
 col1, col2, col3 = st.columns(3)
 col1.metric("Viagens", len(viagens))
-col2.metric("Pontualidade", f"{______:.1f}%")      # média de "pontual" vezes 100
-col3.metric("Atraso médio", f"{______:.1f} min")    # média de "atraso"
+col2.metric("Pontualidade", f"{viagens['pontual'].mean() * 100:.1f}%")
+col3.metric("Atraso médio", f"{viagens['atraso'].mean():.1f} min")
 
 st.subheader("Atraso médio por rota")
-st.bar_chart(______)  
+st.bar_chart(viagens.groupby("rota")["atraso"].mean())
