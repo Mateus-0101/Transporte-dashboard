@@ -77,3 +77,15 @@ if ocorrencias.empty:
     st.info("Nenhuma ocorrência para os filtros escolhidos.")
 else:
     st.bar_chart(ocorrencias["tipo"].value_counts())
+
+ranking = viagens.groupby("rota").agg(
+    viagens=("id", "count"),
+    pontualidade=("pontual", "mean"),
+    atraso_medio=("atraso", "mean"),
+).reset_index()
+
+ranking["pontualidade"] = ranking["pontualidade"] * 100
+ranking = ranking.sort_values("atraso_medio", ascending=False)
+
+st.subheader("Ranking de rotas")
+st.dataframe(ranking.round(1), hide_index=True, use_container_width=True)
