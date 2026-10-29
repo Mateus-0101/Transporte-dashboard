@@ -18,6 +18,9 @@ def carregar():
     df["pontual"] = df["atraso"] <= 5
     return df
 
+@st.cache_data
+def carregar_ocorrencias():
+    return pd.read_sql("SELECT * FROM ocorrencias", engine)
 
 # 1. Dados
 viagens = carregar()
@@ -65,3 +68,12 @@ with col_b:
         st.info("Escolha um período maior para ver a evolução semanal.")
     else:
         st.line_chart(semanal)
+
+ocorrencias = carregar_ocorrencias()
+ocorrencias = ocorrencias[ocorrencias["viagem_id"].isin(viagens["id"])]
+
+st.subheader("Ocorrências por tipo")
+if ocorrencias.empty:
+    st.info("Nenhuma ocorrência para os filtros escolhidos.")
+else:
+    st.bar_chart(ocorrencias["tipo"].value_counts())
