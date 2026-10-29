@@ -1,7 +1,6 @@
 from pathlib import Path
 import pandas as pd
 import streamlit as st
-from sqlalchemy import create_engine
 
 st.set_page_config(page_title="Painel de Transporte", layout="wide")
 engine = create_engine("postgresql+psycopg2:///transporte")
