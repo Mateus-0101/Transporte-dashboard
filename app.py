@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 import streamlit as st
 from sqlalchemy import create_engine
@@ -5,21 +6,21 @@ from sqlalchemy import create_engine
 st.set_page_config(page_title="Painel de Transporte", layout="wide")
 engine = create_engine("postgresql+psycopg2:///transporte")
 
+DATA = Path(__file__).parent / "data"
 
 @st.cache_data
 def carregar():
-    df = pd.read_sql("""
-        SELECT v.*, r.nome AS rota, r.regiao,
-               v.tempo_real_min - r.tempo_previsto_min AS atraso
-        FROM viagens v
-        JOIN rotas r ON r.id = v.rota_id
-    """, engine)
-    df["data"] = pd.to_datetime(df["data"])
+    viagens = pd.read_csv(DATA / "viagens.csv", parse_dates=["data"])
+    rotas = pd.read_csv(DATA / "rotas.csv").rename(columns={"id": "rota_id", "nome": "rota"})
+    df = viagens.merge(rotas, on="rota_id")
+    df["atraso"] = df["tempo_real_min"] - df["tempo_previsto_min"]
     df["pontual"] = df["atraso"] <= 5
     return df
 
+
 @st.cache_data
 def carregar_ocorrencias():
+    return pd.read_csv(DATA / "ocorrencias.csv")
     return pd.read_sql("SELECT * FROM ocorrencias", engine)
 
 # 1. Dados
