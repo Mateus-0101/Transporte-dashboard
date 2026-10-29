@@ -3,7 +3,6 @@ import pandas as pd
 import streamlit as st
 
 st.set_page_config(page_title="Painel de Transporte", layout="wide")
-engine = create_engine("postgresql+psycopg2:///transporte")
 
 DATA = Path(__file__).parent / "data"
 
